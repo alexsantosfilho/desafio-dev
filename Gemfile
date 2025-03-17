@@ -56,6 +56,7 @@ group :development do
   gem "web-console"
   gem "overcommit"
   gem "fasterer"
+  gem "reek"
 end
 
 group :test do
