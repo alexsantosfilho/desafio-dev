@@ -1,0 +1,55 @@
+CommitMsg:
+  ALL:
+    on_warn: fail
+  CapitalizedSubject:
+    enabled: false
+  EmptyMessage:
+    enabled: true
+  TrailingPeriod:
+    enabled: true
+  TextWidth:
+    enabled: false
+  SubjectLength:
+    enabled: true
+    length: 50
+  MessageFormat:
+    enabled: true
+    pattern: '^(Merge .+|(feat|fix|docs|style|refactor|perf|test|chore)(\(.+\))?: .+)'
+    expected_pattern_message: '<type>(<scope>): <subject>'
+    sample_message: 'feat(app): add very important sidebar'
+    on_fail: fail
+
+PreCommit:
+  ALL:
+    on_warn: fail
+  AuthorEmail:
+    enabled: true
+  AuthorName:
+    enabled: true
+  MergeConflicts:
+    enabled: true
+  YamlSyntax:
+    enabled: true
+  BundleCheck:
+    enabled: true
+  RuboCop:
+    enabled: false
+  RunRspecOnStagedFiles:
+    enabled: true
+  Fasterer:
+    enabled: true
+  CustomReek:
+    enabled: true
+    command: ['ruby', '.git-hooks/pre_commit/custom_reek.rb' ]
+    include:
+      - '**/*.rb'
+  BundleAudit:
+    enabled: false
+
+  ForbiddenBranches:
+    enabled: true
+    branch_patterns: ['master']
+
+PrePush:
+  Brakeman:
+    enabled: false
