@@ -1,0 +1,57 @@
+<div class="container">
+  <h1>Transações</h1>
+
+  <%= form_with url: import_transactions_path, method: :post, class: "upload-form", multipart: true do |form| %>
+    <%= form.file_field :file, class: "file-input" %>
+    <%= form.submit "Importar", class: "button" %>
+  <% end %>
+
+  <table class="transactions-table">
+    <thead>
+      <tr>
+        <th>Loja</th>
+        <th>Proprietário</th>
+        <th>Saldo</th>
+        <th>Tipo de Transação</th>
+        <th>Valor</th>
+      </tr>
+    </thead>
+    <tbody>
+      <% @stores.each do |store| %>
+        <tr>
+          <td><%= store.name %></td>
+          <td><%= store.owner %></td>
+          <td class="value-cell <%= store.balance >= 0 ? 'positive' : 'negative' %>">
+            R$ <%= number_to_currency(store.balance, unit: "", separator: ",", delimiter: ".", format: "%n") %>
+          </td>
+          <td colspan="2">
+            <table class="sub-transactions-table">
+              <thead>
+                <tr>
+                  <th>Tipo</th>
+                  <th>Valor</th>
+                  <th>Data</th>
+                </tr>
+              </thead>
+              <tbody>
+                <% store.transactions.each do |transaction| %>
+                  <tr>
+                    <td><%= transaction_nature(transaction.transaction_type) %></td>
+                     <td class="valor">
+                      <%= transaction_sign(transaction.transaction_type) %>
+                      R$ <%= number_to_currency(transaction.value, unit: "", separator: ",", delimiter: ".", format: "%n") %>
+                    </td>
+                    <td><%= transaction.date.strftime('%d/%m/%Y') %></td>
+                  </tr>
+                <% end %>
+              </tbody>
+            </table>
+          </td>
+        </tr>
+      <% end %>
+    </tbody>
+  </table>
+</div>
+
+
+  
