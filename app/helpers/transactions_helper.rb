@@ -1,14 +1,14 @@
 module TransactionsHelper
   TRANSACTION_TYPES = {
-    debit: { description: "Débito", nature: "Entrada", sign: "+" },
-    boleto: { description: "Boleto", nature: "Saída", sign: "-" },
-    financing: { description: "Financiamento", nature: "Saída", sign: "-" },
-    credit: { description: "Crédito", nature: "Entrada", sign: "+" },
-    loan_receipt: { description: "Recebimento Empréstimo", nature: "Entrada", sign: "+" },
-    sales: { description: "Vendas", nature: "Entrada", sign: "+" },
-    ted_receipt: { description: "Recebimento TED", nature: "Entrada", sign: "+" },
-    doc_receipt: { description: "Recebimento DOC", nature: "Entrada", sign: "+" },
-    rent: { description: "Aluguel", nature: "Saída", sign: "-" }
+    1 => { description: "Débito", nature: "Entrada", sign: "+" },
+    2 => { description: "Boleto", nature: "Saída", sign: "-" },
+    3 => { description: "Financiamento", nature: "Saída", sign: "-" },
+    4 => { description: "Crédito", nature: "Entrada", sign: "+" },
+    5 => { description: "Recebimento Empréstimo", nature: "Entrada", sign: "+" },
+    6 => { description: "Vendas", nature: "Entrada", sign: "+" },
+    7 => { description: "Recebimento TED", nature: "Entrada", sign: "+" },
+    8 => { description: "Recebimento DOC", nature: "Entrada", sign: "+" },
+    9 => { description: "Aluguel", nature: "Saída", sign: "-" }
   }.freeze
 
   def transaction_sign(transaction_type)
