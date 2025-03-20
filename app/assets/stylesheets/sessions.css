@@ -92,3 +92,12 @@
     line-height: 1.5; 
     font-weight: bold;
 }
+
+.credentials {
+    margin-top: 16px; 
+    font-size: 16px; 
+    color: #ffffff; 
+    font-family: 'Inter', sans-serif; 
+    line-height: 1.5; 
+    font-weight: bold;
+}
