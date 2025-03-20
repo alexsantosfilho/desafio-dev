@@ -124,6 +124,31 @@ Abra o navegador e acesse:
 http://localhost:3000
 ```
 
+# Overcommit no Rails
+
+O **Overcommit** é uma ferramenta poderosa para automação de hooks de Git. Ela permite que você execute scripts e verificações antes de fazer commit, garantindo que o código siga padrões definidos e evitando a introdução de erros. No contexto do Ruby on Rails, o Overcommit pode ser configurado para rodar uma série de verificações úteis como:
+
+- Verificação de estilo de código (usando `RuboCop`)
+- Testes automatizados
+- Análise de dependências
+- Formatação do código (com `Prettier` ou `Standard`)
+
+## Instalação do Overcommit
+
+1. **Adicionar a gem** ao seu Gemfile:
+
+```ruby
+gem 'overcommit', require: false
+
+2. Instalar a gem:
+
+bundle install
+
+3. Instalar o Overcommit:
+
+overcommit --install
+
+
 # Verificação de Segurança com Brakeman
 
 O Brakeman foi utilizado para realizar uma análise estática de segurança no código do projeto. Abaixo estão os principais pontos verificados e os resultados obtidos:
