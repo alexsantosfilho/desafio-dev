@@ -1,7 +1,13 @@
 Rails.application.routes.draw do
+  resource :session
+  resources :passwords, param: :token
   # Define your application routes per the DSL in https://guides.rubyonrails.org/routing.html
 
-  root "transactions#index"
+  # root "transactions#index"
+  root "pages#home"
+  get "dashboard", to: "pages#dashboard"
+
+
   resources :transactions, only: [ :index, :create ]
 
   post "import", to: "transactions#import", as: "import_transactions"
