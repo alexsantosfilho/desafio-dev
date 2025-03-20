@@ -71,7 +71,7 @@
         <h2 id="configuracao-do-ambiente">Configuração do Ambiente</h2>
         <h3>Pré-requisitos</h3>
         <ul>
-            <li>Ruby 3.0.0</li>
+            <li>Ruby 3.4.2</li>
             <li>Rails 8.0.2</li>
             <li>PostgreSQL 13 ou Superior</li>
             <li>Docker (opcional)</li>
@@ -93,6 +93,9 @@ cd desafio-dev</code></pre>
                     </li>
                     <li>Execute as migrações:
                         <pre><code>rails db:migrate</code></pre>
+                    </li>
+                      <li>Execute a criação do Usuário:
+                        <pre><code>rails db:seed</code></pre>
                     </li>
                 </ul>
             </li>
@@ -173,6 +176,18 @@ cd desafio-dev</code></pre>
             </li>
             <li>Inicie os containers:
                 <pre><code>docker compose up</code></pre>
+            </li>
+            <li>Crie o banco de dados:
+                <pre><code>docker compose exec web rails db:create</code></pre>
+            </li>
+             <li>Inicie a migração do banco de dados:
+                <pre><code>docker compose exec web rails db:migrate</code></pre>
+            </li>
+            <li>Crie o usuário:
+                <pre><code>docker compose exec web rails db:seed</code></pre>
+            </li>
+            <li>Execute os testes:
+                <pre><code>docker compose exec web bundle exec rspec</code></pre>
             </li>
             <li>Acesse a aplicação em:
                 <pre><code>http://localhost:3000</code></pre>

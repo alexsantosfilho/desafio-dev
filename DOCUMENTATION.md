@@ -40,7 +40,7 @@ Este projeto é uma aplicação web desenvolvida em Ruby on Rails que permite o 
 
 ## Configuração do Ambiente
 ### Pré-requisitos
-- Ruby 3.0.0 ou superior
+- Ruby 3.4.2 ou superior
 - Rails 7.0.0 ou superior
 - PostgreSQL
 - Docker (opcional)
@@ -63,6 +63,10 @@ Este projeto é uma aplicação web desenvolvida em Ruby on Rails que permite o 
    - Execute as migrações:
      ```bash
      rails db:migrate
+     ```
+   - Execute a criação do Usuário:
+     ```bash
+     rails db:seed
      ```
 4. Inicie o servidor:
    ```bash
@@ -196,7 +200,23 @@ Para rodar a aplicação em um container Docker, siga os passos abaixo:
    ```bash
    docker-compose up
    ```
-3. Acesse a aplicação em:
+3. Crie o banco de dados:
+   ```bash
+    docker compose exec web rails db:create
+   ```
+4. Inicie a migração do banco de dados:
+   ```bash
+    docker compose exec web rails db:migrate
+   ```
+5. Crie o usuário:
+   ```bash
+    docker compose exec web rails db:seed
+   ```
+6. execute os testes:
+   ```bash
+    docker compose exec web bundle exec rspec
+   ```
+7. Acesse a aplicação em:
    ```
    http://localhost:3000
    ```
