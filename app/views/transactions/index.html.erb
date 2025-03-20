@@ -10,6 +10,13 @@
     <%= form.submit "Importar", class: "button" %>
   <% end %>
 
+   <% if notice %>
+      <div class="notice"><%= notice %></div>
+    <% end %>
+    <% if alert %>
+      <div class="alert"><%= alert %></div>
+    <% end %>
+
   <table class="transactions-table">
     <thead>
       <tr>
