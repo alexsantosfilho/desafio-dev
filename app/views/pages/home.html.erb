@@ -1,0 +1,195 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Documentação do Projeto</title>
+    <%= stylesheet_link_tag 'home', media: 'all', 'data-turbolinks-track': 'reload' %>
+</head>
+<body>
+    <div class="container">
+        <h1>Documentação do Projeto</h1>
+
+        <h2>Índice</h2>
+        <ol class="index-list">
+            <li><a href="#visao-geral">Visão Geral</a></li>
+            <li><a href="#estrutura-do-projeto">Estrutura do Projeto</a></li>
+            <li><a href="#configuracao-do-ambiente">Configuração do Ambiente</a></li>
+            <li><a href="#endpoints-da-api">Endpoints da API</a></li>
+            <li><a href="#exemplos-de-uso">Exemplos de Uso</a></li>
+            <li><a href="#testes">Testes</a></li>
+            <li><a href="#docker">Docker</a></li>
+            <li><a href="#consideracoes-finais">Considerações Finais</a></li>
+        </ol>
+
+        <h2 id="visao-geral">Visão Geral</h2>
+        <p>Este projeto é uma aplicação web desenvolvida em Ruby on Rails que permite o upload de arquivos CNAB (Controle Nacional de Automação Bancária) para processar transações financeiras de lojas. A aplicação faz o parse do arquivo, normaliza os dados e os armazena em um banco de dados PostgreSQL. Além disso, a aplicação exibe uma lista de transações por loja, incluindo o saldo total.</p>
+
+        <h2 id="estrutura-do-projeto">Estrutura do Projeto</h2>
+        <h3>Models</h3>
+        <ul>
+            <li><strong>Store</strong>: Representa uma loja e contém informações como nome e saldo.
+                <ul>
+                    <li><strong>Atributos</strong>: name, owner, balance.</li>
+                    <li><strong>Relacionamento</strong>: has_many :transactions.</li>
+                </ul>
+            </li>
+            <li><strong>Transaction</strong>: Representa uma transação financeira.
+                <ul>
+                    <li><strong>Atributos</strong>: transaction_type, date, value, cpf, card, hour, store_id.</li>
+                    <li><strong>Relacionamento</strong>: belongs_to :store.</li>
+                </ul>
+            </li>
+        </ul>
+
+        <h3>Controllers</h3>
+        <ul>
+            <li><strong>TransactionsController</strong>:
+                <ul>
+                    <li>index: Exibe a lista de transações por loja.</li>
+                    <li>import: Processa o arquivo CNAB e salva as transações no banco de dados.</li>
+                </ul>
+            </li>
+        </ul>
+
+        <h3>Services</h3>
+        <ul>
+            <li><strong>CnabParserService</strong>: Faz o parse do arquivo CNAB e retorna uma lista de transações normalizadas.</li>
+        </ul>
+
+        <h3>Views</h3>
+        <ul>
+            <li><strong>transactions/index.html.erb</strong>: Exibe a lista de transações por loja e o saldo total.</li>
+        </ul>
+
+        <h3>Rotas</h3>
+        <ul>
+            <li>GET /: Exibe a lista de transações.</li>
+            <li>POST /import: Recebe o arquivo CNAB e processa as transações.</li>
+        </ul>
+
+        <h2 id="configuracao-do-ambiente">Configuração do Ambiente</h2>
+        <h3>Pré-requisitos</h3>
+        <ul>
+            <li>Ruby 3.0.0</li>
+            <li>Rails 8.0.2</li>
+            <li>PostgreSQL 13 ou Superior</li>
+            <li>Docker (opcional)</li>
+        </ul>
+
+        <h3>Passos para Configuração</h3>
+        <ol>
+            <li>Clone o repositório:
+                <pre><code>git clone https://github.com/alexsantosfilho/desafio-dev.git
+cd desafio-dev</code></pre>
+            </li>
+            <li>Instale as dependências:
+                <pre><code>bundle install</code></pre>
+            </li>
+            <li>Configure o banco de dados:
+                <ul>
+                    <li>Crie o banco de dados:
+                        <pre><code>rails db:create</code></pre>
+                    </li>
+                    <li>Execute as migrações:
+                        <pre><code>rails db:migrate</code></pre>
+                    </li>
+                </ul>
+            </li>
+            <li>Inicie o servidor:
+                <pre><code>rails server</code></pre>
+            </li>
+        </ol>
+        <p>A aplicação estará disponível em <a href="http://localhost:3000">http://localhost:3000</a>.</p>
+
+        <h2 id="endpoints-da-api">Endpoints da API</h2>
+        <h3>1. Upload de Arquivo CNAB</h3>
+        <ul>
+            <li><strong>Método</strong>: POST</li>
+            <li><strong>Endpoint</strong>: /import</li>
+            <li><strong>Descrição</strong>: Recebe um arquivo CNAB e processa as transações.</li>
+            <li><strong>Parâmetros</strong>:
+                <ul>
+                    <li>file: Arquivo CNAB no formato .txt.</li>
+                </ul>
+            </li>
+            <li><strong>Respostas</strong>:
+                <ul>
+                    <li><strong>Sucesso (200 OK)</strong>:
+                        <pre><code>{
+  "message": "Arquivo importado com sucesso!"
+}</code></pre>
+                    </li>
+                    <li><strong>Erro (400 Bad Request)</strong>:
+                        <pre><code>{
+  "error": "Por favor, selecione um arquivo."
+}</code></pre>
+                    </li>
+                    <li><strong>Erro (500 Internal Server Error)</strong>:
+                        <pre><code>{
+  "error": "Ocorreu um erro ao importar o arquivo. Verifique o formato e tente novamente."
+}</code></pre>
+                    </li>
+                </ul>
+            </li>
+        </ul>
+
+        <h3>2. Listar Transações por Loja</h3>
+        <ul>
+            <li><strong>Método</strong>: GET</li>
+            <li><strong>Endpoint</strong>: /</li>
+            <li><strong>Descrição</strong>: Exibe a lista de transações agrupadas por loja, incluindo o saldo total.</li>
+            <li><strong>Resposta</strong>:
+                <ul>
+                    <li><strong>Sucesso (200 OK)</strong>:
+                        <pre><code>&lt;h1&gt;Transações por Loja&lt;/h1&gt;
+&lt;ul&gt;
+  &lt;li&gt;Loja A - Saldo: R$ 1000.00&lt;/li&gt;
+  &lt;li&gt;Loja B - Saldo: R$ -500.00&lt;/li&gt;
+&lt;/ul&gt;</code></pre>
+                    </li>
+                </ul>
+            </li>
+        </ul>
+
+        <h2 id="exemplos-de-uso">Exemplos de Uso</h2>
+        <h3>Upload de Arquivo CNAB</h3>
+        <p>Usando curl:</p>
+        <pre><code>curl -X POST -F "file=@/caminho/para/seu/arquivo/CNAB.txt" http://localhost:3000/import</code></pre>
+
+        <h3>Acessando a Lista de Transações</h3>
+        <p>Abra o navegador e acesse:</p>
+        <pre><code>http://localhost:3000</code></pre>
+
+        <h2 id="testes">Testes Automatizados</h2>
+        <p>Para rodar os testes automatizados, execute:</p>
+        <pre><code>bundle exec rspec</code></pre>
+
+        <h2 id="docker">Docker</h2>
+        <p>Para rodar a aplicação em um container Docker é recomendado que tenha instalado o Docker Compose na versão 2, siga os passos abaixo para rodar aplicação em Docker Compose:</p>
+        <ol>
+            <li>Construa a imagem:
+                <pre><code>docker compose build</code></pre>
+            </li>
+            <li>Inicie os containers:
+                <pre><code>docker compose up</code></pre>
+            </li>
+            <li>Acesse a aplicação em:
+                <pre><code>http://localhost:3000</code></pre>
+            </li>
+        </ol>
+
+        <h2 id="consideracoes-finais">Considerações Finais</h2>
+        <p>Este projeto foi desenvolvido com o objetivo de facilitar o processamento de arquivos CNAB e a visualização de transações financeiras por loja. Para qualquer dúvida ou sugestão, sinta-se à vontade para entrar em contato.</p>
+
+        <div class="login-section">
+            <p>Para realizar o teste, utilize o seguinte login:</p>
+            <ul>
+                <li><strong>Email</strong>: bycoders_@email.com</li>
+                <li><strong>Senha</strong>: senha1234</li>
+            </ul>
+            <%= link_to "Login", new_session_path, class: "login-button" %>
+        </div>
+    </div>
+</body>
+</html>
