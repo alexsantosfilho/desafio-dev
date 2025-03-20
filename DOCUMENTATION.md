@@ -48,8 +48,8 @@ Este projeto é uma aplicação web desenvolvida em Ruby on Rails que permite o 
 ### Passos para Configuração
 1. Clone o repositório:
    ```bash
-   git clone https://github.com/seu-usuario/seu-repositorio.git
-   cd seu-repositorio
+   git clone https://github.com/alexsantosfilho/desafio-dev.git
+   cd desafio-dev
    ```
 2. Instale as dependências:
    ```bash
