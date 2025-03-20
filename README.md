@@ -47,9 +47,9 @@ Este projeto é uma aplicação web desenvolvida em Ruby on Rails que permite o 
 
 ## Configuração do Ambiente
 ### Pré-requisitos
-- Ruby 3.4.2 ou superior
-- Rails 7.0.0 ou superior
-- PostgreSQL
+- Ruby 3.4.2
+- Rails 8.0.2
+- PostgreSQL ou superior
 - Docker (opcional)
 
 ### Passos para Configuração
