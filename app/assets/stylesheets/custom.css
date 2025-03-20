@@ -1,4 +1,4 @@
-/* Estilos globais */
+Estilos globais
 body {
   font-family: 'Arial', sans-serif;
   background-color: #f4f7fc;
@@ -7,14 +7,12 @@ body {
   padding: 0;
 }
 
-/* Container principal */
 .container {
-  max-width: 1200px;
+  max-width: 1060px;
   margin: 0 auto;
   padding: 20px;
 }
 
-/* Estilo da tabela principal */
 .transactions-table {
   width: 100%;
   border-collapse: collapse;
@@ -24,9 +22,8 @@ body {
   box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
 }
 
-/* Cabeçalho da tabela */
 .transactions-table th {
-  background-color: #4299e1;
+  background-color: #020202;
   color: #ffffff;
   padding: 12px;
   text-align: left;
@@ -43,21 +40,18 @@ body {
   border-bottom: 1px solid #e2e8f0;
 }
 
-/* Efeito de hover nas linhas da tabela */
 .transactions-table tr:hover {
   background-color: #f7fafc;
 }
 
-/* Coluna de valores positivos e negativos */
 .transactions-table .positive {
-  color: #38a169; /* Verde para valores positivos */
+  color: #38a169; 
 }
 
 .transactions-table .negative {
-  color: #e53e3e; /* Vermelho para valores negativos */
+  color: #e53e3e;
 }
 
-/* Tabela interna das transações */
 .sub-transactions-table {
   width: 100%;
   border-collapse: collapse;
@@ -67,7 +61,7 @@ body {
 }
 
 .sub-transactions-table th {
-  background-color: #edf2f7;
+  background-color: #4c1a9b;
   font-size: 0.9rem;
   font-weight: 600;
   padding: 10px;
@@ -89,14 +83,13 @@ body {
 }
 
 .sub-transactions-table .positive {
-  color: #38a169; /* Verde */
+  color: #38a169; 
 }
 
 .sub-transactions-table .negative {
-  color: #e53e3e; /* Vermelho */
+  color: #e53e3e;
 }
 
-/* Botões */
 .button {
   display: inline-block;
   padding: 12px 24px;
@@ -113,7 +106,6 @@ body {
   background-color: #2f855a;
 }
 
-/* Formulário de upload */
 .upload-form {
   background-color: #ffffff;
   padding: 20px;
@@ -134,14 +126,13 @@ body {
 
 .upload-form .button {
   padding: 10px 20px;
-  background-color: #4299e1;
+  background-color: #16d158;
 }
 
 .upload-form .file-input, .upload-form .button {
   font-size: 1rem;
 }
 
-/* Mensagens de alerta */
 .alert {
   padding: 15px;
   margin-bottom: 20px;
@@ -160,9 +151,8 @@ body {
 }
 
 
-/* Ajustando a largura da coluna Valor */
 .transactions-table td.valor {
-  width: 150px;  /* Ajuste a largura conforme necessário */
+  width: 150px;
 }
 
 .transactions-table th {
@@ -176,9 +166,67 @@ body {
 }
 
 .transactions-table td.positive {
-  color: #38a169; /* Verde para valores positivos */
+  color: #38a169;
 }
 
 .transactions-table td.negative {
-  color: #e53e3e; /* Vermelho para valores negativos */
+  color: #e53e3e;
+}
+
+.header {
+  position: fixed;
+  top: 0;
+  right: 0; 
+  left: auto; 
+  padding: 1rem;
+  background-color: #ffffff;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  z-index: 1000;
+  display: flex;
+  align-items: center;
+  justify-content: flex-end; 
+  gap: 1rem;
+}
+
+.logout-button {
+  background-color: #dc3545;
+  color: #fff;
+  border: none;
+  padding: 0.5rem 1rem;
+  border-radius: 4px;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+
+.logout-button:hover {
+  background-color: #c82333;
+}
+
+.value-cell.positive {
+  color: green;
+}
+
+.value-cell.negative {
+  color: red;
+}
+
+.elegant-title {
+  font-family: 'Inter', sans-serif;
+  font-size: 2.5rem;
+  font-weight: 600; 
+  color: #2c3e50; 
+  text-align: center; 
+  margin: 2rem 0; 
+  letter-spacing: -0.02em; 
+  position: relative;
+}
+
+.elegant-title::after {
+  content: '';
+  display: block;
+  width: 60px; 
+  height: 4px; 
+  background-color: #3498db; 
+  margin: 0.5rem auto 0; 
+  border-radius: 2px; 
 }
