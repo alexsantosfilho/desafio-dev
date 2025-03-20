@@ -124,6 +124,36 @@ Abra o navegador e acesse:
 http://localhost:3000
 ```
 
+# Verificação de Segurança com Brakeman
+
+O Brakeman foi utilizado para realizar uma análise estática de segurança no código do projeto. Abaixo estão os principais pontos verificados e os resultados obtidos:
+
+## Resultados da Análise
+1. **Vulnerabilidades de Injeção SQL**:
+   - **Status**: Nenhuma vulnerabilidade de injeção SQL foi detectada.
+   - **Recomendação**: Continuar utilizando métodos seguros de acesso ao banco de dados, como `ActiveRecord` queries.
+
+2. **Cross-Site Scripting (XSS)**:
+   - **Status**: Nenhuma vulnerabilidade de XSS foi detectada.
+   - **Recomendação**: Manter a sanitização de dados de entrada e a utilização de helpers como `h()` para escapar conteúdo HTML.
+
+3. **Cross-Site Request Forgery (CSRF)**:
+   - **Status**: Proteção CSRF está habilitada por padrão no Rails.
+   - **Recomendação**: Garantir que todas as requisições que modificam dados estejam protegidas por tokens CSRF.
+
+4. **Exposição de Dados Sensíveis**:
+   - **Status**: Nenhuma exposição de dados sensíveis foi detectada.
+   - **Recomendação**: Continuar utilizando variáveis de ambiente para armazenar credenciais e informações sensíveis.
+
+5. **Configurações de Segurança**:
+   - **Status**: Configurações de segurança básicas estão corretas.
+   - **Recomendação**: Revisar periodicamente as configurações de segurança do Rails e manter o framework atualizado.
+
+## Como Executar o Brakeman
+Para executar o Brakeman e verificar a segurança do código, é bem fácil:
+
+execute no terminal do projeto o comando: brakeman
+
 ## Testes Automatizados
 Para rodar os testes automatizados, execute:
 ```bash
