@@ -2,6 +2,11 @@ require 'rails_helper'
 
 RSpec.describe TransactionsController, type: :controller do
   before(:each) do
+    @user = User.create!(email_address: "bycoders_@email.com", password: "senha1234")
+    @session = @user.sessions.create!(user_agent: "RSpec Test", ip_address: "127.0.0.1")
+
+    cookies.signed[:session_id] = @session.id
+
     Store.delete_all
   end
 
