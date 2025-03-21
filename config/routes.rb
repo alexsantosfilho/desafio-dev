@@ -7,10 +7,12 @@ Rails.application.routes.draw do
   root "pages#home"
   get "dashboard", to: "pages#dashboard"
 
-
   resources :transactions, only: [ :index, :create ]
 
   post "import", to: "transactions#import", as: "import_transactions"
+
+  get "/auth/failure" => "sessions/omni_auths#failure", as: :omniauth_failure
+  get "/auth/:provider/callback", to: "sessions#omniauth", as: :omniauth_callback
 
   # Reveal health status on /up that returns 200 if the app boots with no exceptions, otherwise 500.
   # Can be used by load balancers and uptime monitors to verify that the app is live.
