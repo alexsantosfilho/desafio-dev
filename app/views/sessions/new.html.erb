@@ -20,7 +20,10 @@
     <%= form.submit "Sign in", class: "submit-btn" %>
   <% end %>
 
-<h3> Ou login com Google</h3>
-<%= button_to "Logar com Google", "/auth/google_oauth2", data: { turbo: false } %>
+<h3>Ou</h3>
+
+<%= button_to "/auth/google_oauth2", method: :post, data: { turbo: false }, class: "google-login-button" do %>
+  <img src="/assets/images/google-logo.png" alt="Google Icon" class="google-icon"> Continuar com Google
+<% end %>
 
 </div>
