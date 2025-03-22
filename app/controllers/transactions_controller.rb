@@ -1,6 +1,7 @@
 class TransactionsController < ApplicationController
   def index
     @stores = Store.order(:name)
+    @import_transaction = ImportTransaction.last
   end
 
   def import
@@ -17,6 +18,6 @@ class TransactionsController < ApplicationController
 
     Transactions::ImportJob.perform_later(import_transaction.id, temp_file_path.to_s)
 
-    redirect_to transactions_path, notice: "Importação iniciada! Você será notificado ao final."
+    render json: {}, status: :no_content
   end
 end

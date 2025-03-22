@@ -1,0 +1,5 @@
+<% if local_assigns[:type] == :notice %>
+  <div class="notice"><%= local_assigns[:message] %></div>
+<% elsif local_assigns[:type] == :alert %>
+  <div class="alert"><%= local_assigns[:message] %></div>
+<% end %>

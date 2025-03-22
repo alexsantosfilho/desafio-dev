@@ -3,6 +3,7 @@ Rails.application.routes.draw do
   resources :passwords, param: :token
   # Define your application routes per the DSL in https://guides.rubyonrails.org/routing.html
   mount MissionControl::Jobs::Engine, at: "/jobs"
+  mount ActionCable.server => "/cable"
 
   # root "transactions#index"
   root "pages#home"
