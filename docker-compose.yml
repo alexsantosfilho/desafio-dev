@@ -23,5 +23,9 @@ services:
       DATABASE_HOST: db
       DATABASE_USER: postgres
       DATABASE_PASSWORD: postgres
+      GOOGLE_CLIENT_ID: ${GOOGLE_CLIENT_ID}
+      GOOGLE_CLIENT_SECRET: ${GOOGLE_CLIENT_SECRET}
+      SOLID_QUEUE_IN_PUMA: ${SOLID_QUEUE_IN_PUMA}
+
 volumes:
   postgres_data:
