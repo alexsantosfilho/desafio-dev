@@ -1,16 +1,13 @@
 module Transactions
   class ImportService
-    def initialize(file)
-      @file = file
+    def initialize(file_path, import_transaction)
+      @file_path = file_path
+      @import_transaction = import_transaction
     end
 
     def call
-      transactions = CnabParserService.new(@file.path).call
+      transactions = CnabParserService.new(@file_path).call
       save_transactions(transactions)
-      ServiceResult.success
-    rescue StandardError => e
-      Rails.logger.error("Erro ao importar arquivo: #{e.message}")
-      ServiceResult.failure("Ocorreu um erro ao importar o arquivo. Verifique o formato e tente novamente.")
     end
 
     private

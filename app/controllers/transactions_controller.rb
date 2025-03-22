@@ -10,12 +10,13 @@ class TransactionsController < ApplicationController
       redirect_to transactions_path, alert: "Por favor, selecione um arquivo." and return
     end
 
-    result = Transactions::ImportService.new(file).call
+    temp_file_path = Rails.root.join("tmp", file.original_filename)
+    File.open(temp_file_path, "wb") { |f| f.write(file.read) }
 
-    if result.success?
-      redirect_to transactions_path, notice: "Arquivo importado com sucesso!"
-    else
-      redirect_to transactions_path, alert: result.error_message
-    end
+    import_transaction = ImportTransaction.create!(file_name: file.original_filename, status: :pending)
+
+    Transactions::ImportJob.perform_later(import_transaction.id, temp_file_path.to_s)
+
+    redirect_to transactions_path, notice: "Importação iniciada! Você será notificado ao final."
   end
 end
