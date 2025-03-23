@@ -1,0 +1,199 @@
+openapi: 3.0.0
+info:
+  title: API de Transações e Importação CNAB
+  version: 1.0.0
+  description: API para importação de arquivos CNAB e listagem de transações.
+servers:
+  - url: http://localhost:3000
+    description: Servidor local de desenvolvimento
+
+paths:
+  /api/v1/cnab/import:
+    post:
+      summary: Importa um arquivo CNAB
+      description: Endpoint para importar um arquivo CNAB e processar as transações.
+      tags:
+        - CNAB
+      requestBody:
+        content:
+          multipart/form-data:
+            schema:
+              type: object
+              properties:
+                file:
+                  type: string
+                  format: binary
+                  description: Arquivo CNAB para importação.
+      responses:
+        '302':
+          description: Redirecionamento com mensagem de sucesso ou erro.
+          headers:
+            Location:
+              schema:
+                type: string
+              description: URL de redirecionamento (api_v1_transactions_path).
+          content:
+            text/html:
+              schema:
+                type: string
+                examples:
+                  no_file:
+                    value: "Por favor, selecione um arquivo."
+                  file_save_error:
+                    value: "Erro ao salvar o arquivo: erro específico."
+                  import_transaction_error:
+                    value: "Erro ao criar transação de importação: erro específico."
+                  job_enqueue_error:
+                    value: "Erro ao enfileirar o trabalho de importação: erro específico."
+                  success:
+                    value: "Arquivo enviado com sucesso! Aguarde o processamento."
+
+  /api/v1/transactions:
+    get:
+      summary: Lista todas as transações
+      description: Retorna uma lista de todas as transações, ordenadas por loja.
+      tags:
+        - Transactions
+      responses:
+        '200':
+          description: Lista de transações retornada com sucesso.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  stores:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        id:
+                          type: integer
+                          example: 1
+                        name:
+                          type: string
+                          example: "Store A"
+                        owner:
+                          type: string
+                          example: "Owner A"
+                        balance:
+                          type: number
+                          example: 100.0
+                  import_transaction:
+                    type: object
+                    properties:
+                      id:
+                        type: integer
+                        example: 1
+                      file_name:
+                        type: string
+                        example: "CNAB.txt"
+                      status:
+                        type: string
+                        example: "pending"
+
+  /auth/failure:
+    get:
+      summary: Falha na autenticação
+      description: Redireciona em caso de falha na autenticação via OmniAuth.
+      tags:
+        - Authentication
+      responses:
+        '302':
+          description: Redirecionamento para página de login com mensagem de erro.
+
+  /auth/{provider}/callback:
+    get:
+      summary: Callback de autenticação via OmniAuth
+      description: Endpoint chamado após autenticação via provedores OAuth.
+      tags:
+        - Authentication
+      parameters:
+        - name: provider
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '302':
+          description: Redirecionamento após autenticação bem-sucedida.
+
+  /session:
+    post:
+      summary: Criar sessão de usuário
+      description: Endpoint para autenticar um usuário e iniciar uma sessão.
+      tags:
+        - Authentication
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                email:
+                  type: string
+                  example: "user@example.com"
+                password:
+                  type: string
+                  example: "password123"
+      responses:
+        '302':
+          description: Redirecionamento após login bem-sucedido ou falha na autenticação.
+    delete:
+      summary: Encerrar sessão de usuário
+      description: Endpoint para logout do usuário.
+      tags:
+        - Authentication
+      responses:
+        '302':
+          description: Redirecionamento para tela de login após logout.
+
+  /passwords:
+    post:
+      summary: Solicitar redefinição de senha
+      description: Envia um e-mail para redefinição de senha do usuário.
+      tags:
+        - Authentication
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                email:
+                  type: string
+                  example: "user@example.com"
+      responses:
+        '302':
+          description: Redirecionamento após envio do e-mail de redefinição.
+    put:
+      summary: Atualizar senha do usuário
+      description: Atualiza a senha do usuário após redefinição.
+      tags:
+        - Authentication
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                token:
+                  type: string
+                  example: "reset_token"
+                new_password:
+                  type: string
+                  example: "new_password123"
+      responses:
+        '302':
+          description: Redirecionamento após atualização bem-sucedida ou falha.
+
+components:
+  securitySchemes:
+    session_cookie:
+      type: apiKey
+      in: cookie
+      name: session_id
+      description: Autenticação baseada em cookie de sessão.
