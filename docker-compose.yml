@@ -3,22 +3,37 @@ version: '3.8'
 services:
   db:
     image: postgres:13
+    restart: always
     volumes:
       - postgres_data:/var/lib/postgresql/data
     environment:
       POSTGRES_USER: postgres
       POSTGRES_PASSWORD: postgres
       POSTGRES_DB: meu_projeto_rails_development
+    healthcheck:
+      test: ["CMD", "pg_isready", "-U", "postgres"]
+      interval: 5s
+      retries: 5
+      timeout: 3s
 
   web:
     build: .
-    command: bash -c "rm -f tmp/pids/server.pid && rails server -b 0.0.0.0"
+    command: >
+      bash -c "
+      rm -f tmp/pids/server.pid &&
+      until pg_isready -h db -U postgres; do sleep 1; done &&
+      echo 'Banco pronto! Iniciando aplicação...' &&
+      rails db:migrate &&
+      rails db:seed || true &&
+      exec rails server -b 0.0.0.0"
+    restart: always
     volumes:
       - .:/myapp
     ports:
       - "3000:3000"
     depends_on:
-      - db
+      db:
+        condition: service_healthy
     environment:
       DATABASE_HOST: db
       DATABASE_USER: postgres

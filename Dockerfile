@@ -2,7 +2,7 @@
 FROM ruby:3.4.2
 
 # Instale dependências do sistema
-RUN apt-get update -qq && apt-get install -y build-essential libpq-dev nodejs
+RUN apt-get update -qq && apt-get install -y build-essential libpq-dev nodejs && apt-get install -y postgresql-client
 
 # Crie um diretório para o aplicativo
 RUN mkdir /desafio-dev
