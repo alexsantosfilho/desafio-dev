@@ -1,6 +1,6 @@
 Rails.application.routes.draw do
-  mount Rswag::Ui::Engine => '/api-docs'
-  mount Rswag::Api::Engine => '/api-docs'
+  mount Rswag::Ui::Engine => "/api-docs"
+  mount Rswag::Api::Engine => "/api-docs"
   resource :session
   resources :passwords, param: :token
   # Define your application routes per the DSL in https://guides.rubyonrails.org/routing.html
@@ -13,8 +13,11 @@ Rails.application.routes.draw do
 
   namespace :api do
     namespace :v1 do
+      resource :cnab, only: [] do
+        post "import", to: "cnab#import", as: "import"
+      end
   resources :transactions, only: [ :index, :create ]
-    post "import", to: "transactions#import", as: "import_transactions"
+      post "import", to: "transactions#import", as: "import_transactions"
     end
   end
   get "/auth/failure" => "sessions/omni_auths#failure", as: :omniauth_failure
