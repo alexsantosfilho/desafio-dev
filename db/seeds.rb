@@ -10,4 +10,5 @@
 
 User.find_or_create_by!(email_address: "bycoders_@email.com") do |user|
   user.password = "senha1234"
+  user.name = "ByCoders"
 end
