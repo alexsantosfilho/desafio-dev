@@ -24,14 +24,14 @@ class Transactions::ImportJob < ApplicationJob
     Turbo::StreamsChannel.broadcast_replace_to(
       "import_transactions",
       target: "transactions-table",
-      partial: "transactions/transactions_table",
+      partial: "api/v1/transactions/transactions_table",
       locals: { stores: stores }
     )
 
     Turbo::StreamsChannel.broadcast_replace_to(
       "import_transactions",
       target: type,
-      partial: "transactions/import_status",
+      partial: "api/v1/transactions/import_status",
       locals: { message: message, type: type }
     )
   end

@@ -1,7 +1,7 @@
 class PagesController < ApplicationController
   allow_unauthenticated_access only: [ :home ]
   def home
-    redirect_to transactions_path if authenticated?
+    redirect_to api_v1_transactions_path if authenticated?
   end
 
   def dashboard

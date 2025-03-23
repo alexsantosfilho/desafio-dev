@@ -9,10 +9,12 @@ Rails.application.routes.draw do
   root "pages#home"
   get "dashboard", to: "pages#dashboard"
 
+  namespace :api do
+    namespace :v1 do
   resources :transactions, only: [ :index, :create ]
-
-  post "import", to: "transactions#import", as: "import_transactions"
-
+    post "import", to: "transactions#import", as: "import_transactions"
+    end
+  end
   get "/auth/failure" => "sessions/omni_auths#failure", as: :omniauth_failure
   get "/auth/:provider/callback", to: "sessions#omniauth", as: :omniauth_callback
 

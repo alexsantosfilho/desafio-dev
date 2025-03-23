@@ -18,11 +18,11 @@
   <% end %>
 </div>
 
-<%= form_with url: import_transactions_path, method: :post, class: "upload-form", multipart: true, data: { turbo: true } do |form| %>
+<%= form_with url: api_v1_import_transactions_path, method: :post, class: "upload-form", multipart: true, data: { turbo: true } do |form| %>
   <%= form.file_field :file, class: "file-input" %>
   <%= form.submit "Importar", class: "button" %>
 <% end %>
 
 <div id="transactions-table">
-  <%= render "transactions/transactions_table", stores: @stores %>
+  <%= render "api/v1/transactions/transactions_table", stores: @stores %>
 </div>
