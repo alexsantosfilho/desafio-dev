@@ -27,7 +27,7 @@ RSpec.describe Api::V1::CnabController, type: :controller do
           post :import, params: { file: file }
         }.to change(ImportTransaction, :count).by(1)
 
-        expect(response.status).to eq(204)
+        expect(response.status).to eq(302)
         expect(ImportTransaction.last.status).to eq('pending')
       end
     end
