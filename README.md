@@ -7,13 +7,26 @@ Este documento descreve o projeto desenvolvido para o desafio de programação, 
 ## Índice
 1. [Visão Geral](#visão-geral)
 2. [Estrutura do Projeto](#estrutura-do-projeto)
-3. [Configuração do Ambiente](#configuração-do-ambiente)
-4. [Endpoints da API](#endpoints-da-api)
-5. [Exemplos de Uso](#exemplos-de-uso)
-6. [Testes](#testes)
-7. [Docker](#docker)
-8. [Considerações Finais](#considerações-finais)
-9. [Novas Tecnologias Utilizadas](#novas-tecnologias-utilizadas)
+   - [Models](#models)  
+   - [Controllers](#controllers)  
+   - [Services](#services)  
+   - [Views](#views)  
+   - [Documentação da API com Swagger UI](#documentação-da-api-com-swagger-ui)  
+3. [Diagrama do Banco de Dados](#diagrama-do-banco-de-dados)  
+   - [Descrição das Tabelas](#descrição-das-tabelas)  
+   - [Relacionamentos](#relacionamentos)  
+4. [Rotas](#rotas)  
+   - [Rotas Disponíveis](#rotas-disponíveis)  
+5. [Configuração do Ambiente](#configuração-do-ambiente)  
+6. [Endpoints da API](#endpoints-da-api)  
+7. [Exemplos de Uso](#exemplos-de-uso)  
+8. [Testes](#testes)  
+9. [Docker](#docker)  
+10. [Overcommit no Rails](#overcommit-no-rails)  
+    - [Instalação do Overcommit](#instalação-do-overcommit)  
+11. [Considerações Finais](#considerações-finais)  
+12. [Novas Tecnologias Utilizadas](#novas-tecnologias-utilizadas)  
+
 
 ---
 
@@ -73,6 +86,74 @@ As rotas foram atualizadas para utilizar namespaces, versionamento da API, auten
       http://localhost:3000/api-docs
    ```
 ![image](https://github.com/user-attachments/assets/5b681b42-04eb-4059-911f-712c68d9db46)
+
+---
+
+
+## Diagrama do Banco de Dados
+
+
+```
+```
+
+
+### Descrição das Tabelas
+
+
+#### 1. Users
+- **Propósito**: Armazenar informações dos usuários do sistema
+- **Campos**:
+ - `id` (PK): Identificador único
+ - `name`: Nome do usuário
+ - `email_address`: Email do usuário (único)
+ - `password_digest`: Hash da senha (usando bcrypt)
+ - `provider`: Provedor OAuth (ex: 'google')
+ - `uid`: ID único do provedor OAuth
+ - `created_at`, `updated_at`: Timestamps
+
+
+#### 2. Sessions
+- **Propósito**: Gerenciar sessões de usuários
+- **Campos**:
+ - `id` (PK): Identificador único
+ - `user_id` (FK): Referência ao usuário
+ - `ip_address`: endereço de ip
+ - `user_agent`: identificar por onde o usuário acessou
+ - `created_at`, `updated_at`: Timestamps
+
+
+#### 3. Stores
+- **Propósito**: Armazenar informações das lojas
+- **Campos**:
+ - `id` (PK): Identificador único
+ - `name`: Nome da loja
+ - `owner`: Nome do proprietário
+ - `balance`: Saldo total calculado
+ - `created_at`, `updated_at`: Timestamps
+
+
+#### 4. Transactions
+- **Propósito**: Registrar transações financeiras das lojas
+- **Campos**:
+ - `id` (PK): Identificador único
+ - `store_id` (FK): Loja associada
+ - `transaction_type`: Tipo da transação (1-9)
+ - `date`: Data da transação
+ - `value`: Valor da transação
+ - `cpf`: CPF do beneficiário
+ - `card`: Número do cartão
+ - `hour`: Hora da transação
+ - `store_owner`: Dono da loja
+ - `store_name`: Nome da loja
+ - `created_at`, `updated_at`: Timestamps
+
+
+#### Relacionamentos
+1. **User-Session**: Um-para-muitos (1 usuário pode ter várias sessões)
+2. **Store-Transaction**: Um-para-muitos (1 loja pode ter várias transações)
+
+
+```
 
 ### Rotas
 
