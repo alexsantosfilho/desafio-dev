@@ -8,17 +8,21 @@
 </head>
 <body>
     <div class="container">
-        <h1>Documentação do Projeto</h1>
+        <h1>Desafio Programação - Para Vaga Desenvolvedor</h1>
+        <p>Este documento descreve o projeto desenvolvido para o desafio de programação, que consiste em uma aplicação Ruby on Rails para processar arquivos CNAB e armazenar transações financeiras em um banco de dados. A aplicação também exibe uma lista de transações por loja, incluindo o saldo total.</p>
 
         <h2>Índice</h2>
         <ol class="index-list">
             <li><a href="#visao-geral">Visão Geral</a></li>
             <li><a href="#estrutura-do-projeto">Estrutura do Projeto</a></li>
+            <li><a href="#diagrama-banco-dados">Diagrama do Banco de Dados</a></li>
+            <li><a href="#rotas">Rotas</a></li>
             <li><a href="#configuracao-do-ambiente">Configuração do Ambiente</a></li>
-            <li><a href="#endpoints-da-api">Endpoints da API</a></li>
-            <li><a href="#exemplos-de-uso">Exemplos de Uso</a></li>
-            <li><a href="#testes">Testes</a></li>
+            <li><a href="#testes">Testes Automatizados</a></li>
             <li><a href="#docker">Docker</a></li>
+            <li><a href="#overcommit">Overcommit no Rails</a></li>
+            <li><a href="#seguranca">Verificação de Segurança</a></li>
+            <li><a href="#novas-tecnologias">Novas Tecnologias Utilizadas</a></li>
             <li><a href="#consideracoes-finais">Considerações Finais</a></li>
         </ol>
 
@@ -26,6 +30,7 @@
         <p>Este projeto é uma aplicação web desenvolvida em Ruby on Rails que permite o upload de arquivos CNAB (Controle Nacional de Automação Bancária) para processar transações financeiras de lojas. A aplicação faz o parse do arquivo, normaliza os dados e os armazena em um banco de dados PostgreSQL. Além disso, a aplicação exibe uma lista de transações por loja, incluindo o saldo total.</p>
 
         <h2 id="estrutura-do-projeto">Estrutura do Projeto</h2>
+        
         <h3>Models</h3>
         <ul>
             <li><strong>Store</strong>: Representa uma loja e contém informações como nome e saldo.
@@ -40,6 +45,18 @@
                     <li><strong>Relacionamento</strong>: belongs_to :store.</li>
                 </ul>
             </li>
+            <li><strong>User</strong>: Representa um usuário do sistema.
+                <ul>
+                    <li><strong>Atributos</strong>: email, password_digest, provider, uid.</li>
+                    <li><strong>Relacionamento</strong>: has_many :sessions.</li>
+                </ul>
+            </li>
+            <li><strong>Session</strong>: Representa uma sessão de usuário.
+                <ul>
+                    <li><strong>Atributos</strong>: user_id, token.</li>
+                    <li><strong>Relacionamento</strong>: belongs_to :user.</li>
+                </ul>
+            </li>
         </ul>
 
         <h3>Controllers</h3>
@@ -47,7 +64,14 @@
             <li><strong>TransactionsController</strong>:
                 <ul>
                     <li>index: Exibe a lista de transações por loja.</li>
-                    <li>import: Processa o arquivo CNAB e salva as transações no banco de dados.</li>
+                    <li>import: Processa o arquivo CNAB e salva as transações no banco de dados (Job solid_cache e solid_queue).</li>
+                </ul>
+            </li>
+            <li><strong>SessionsController</strong>:
+                <ul>
+                    <li>create: Cria uma nova sessão de usuário.</li>
+                    <li>destroy: Encerra a sessão do usuário.</li>
+                    <li>omniauth: Lida com o callback de autenticação OAuth.</li>
                 </ul>
             </li>
         </ul>
@@ -59,25 +83,173 @@
 
         <h3>Views</h3>
         <ul>
-            <li><strong>api/v1/transactions/index.html.erb</strong>: Exibe a lista de transações por loja e o saldo total.</li>
+            <li><strong>session/new</strong>: Exibe a tela de login.</li>
+            <li><strong>transactions/index.html.erb</strong>: Exibe a lista de transações por loja e o saldo total.</li>
         </ul>
 
-        <h3>Rotas</h3>
+        <h3>Documentação da API com Swagger UI</h3>
+        <p>Para documentar a API de forma clara e interativa, utilizamos a gem <strong>Rswag</strong>, que integra o Swagger UI ao projeto Rails.</p>
+        <p>As rotas foram atualizadas para utilizar namespaces, versionamento da API, autenticação, gerenciamento de jobs e documentação da API com Swagger.</p>
+        <p>Link api-doc(Swagger): <a href="http://localhost:3000/api-docs">http://localhost:3000/api-docs</a></p>
+
+        <h2 id="diagrama-banco-dados">Diagrama do Banco de Dados</h2>
+        <p>Diagrama do banco de dados mostrando as tabelas e relacionamentos:</p>
+        
+        <h3>Descrição das Tabelas</h3>
+        <h4>1. Users</h4>
         <ul>
-            <li>GET /: Exibe a lista de transações.</li>
-            <li>POST /import: Recebe o arquivo CNAB e processa as transações.</li>
+            <li><strong>Propósito</strong>: Armazenar informações dos usuários do sistema</li>
+            <li><strong>Campos</strong>:
+                <ul>
+                    <li>id (PK): Identificador único</li>
+                    <li>name: Nome do usuário</li>
+                    <li>email_address: Email do usuário (único)</li>
+                    <li>password_digest: Hash da senha (usando bcrypt)</li>
+                    <li>provider: Provedor OAuth (ex: 'google')</li>
+                    <li>uid: ID único do provedor OAuth</li>
+                    <li>created_at, updated_at: Timestamps</li>
+                </ul>
+            </li>
         </ul>
+
+        <h4>2. Sessions</h4>
+        <ul>
+            <li><strong>Propósito</strong>: Gerenciar sessões de usuários</li>
+            <li><strong>Campos</strong>:
+                <ul>
+                    <li>id (PK): Identificador único</li>
+                    <li>user_id (FK): Referência ao usuário</li>
+                    <li>ip_address: endereço de ip</li>
+                    <li>user_agent: identificar por onde o usuário acessou</li>
+                    <li>created_at, updated_at: Timestamps</li>
+                </ul>
+            </li>
+        </ul>
+
+        <h4>3. Stores</h4>
+        <ul>
+            <li><strong>Propósito</strong>: Armazenar informações das lojas</li>
+            <li><strong>Campos</strong>:
+                <ul>
+                    <li>id (PK): Identificador único</li>
+                    <li>name: Nome da loja</li>
+                    <li>owner: Nome do proprietário</li>
+                    <li>balance: Saldo total calculado</li>
+                    <li>created_at, updated_at: Timestamps</li>
+                </ul>
+            </li>
+        </ul>
+
+        <h4>4. Transactions</h4>
+        <ul>
+            <li><strong>Propósito</strong>: Registrar transações financeiras das lojas</li>
+            <li><strong>Campos</strong>:
+                <ul>
+                    <li>id (PK): Identificador único</li>
+                    <li>store_id (FK): Loja associada</li>
+                    <li>transaction_type: Tipo da transação (1-9)</li>
+                    <li>date: Data da transação</li>
+                    <li>value: Valor da transação</li>
+                    <li>cpf: CPF do beneficiário</li>
+                    <li>card: Número do cartão</li>
+                    <li>hour: Hora da transação</li>
+                    <li>store_owner: Dono da loja</li>
+                    <li>store_name: Nome da loja</li>
+                    <li>created_at, updated_at: Timestamps</li>
+                </ul>
+            </li>
+        </ul>
+
+        <h3>Relacionamentos</h3>
+        <ol>
+            <li><strong>User-Session</strong>: Um-para-muitos (1 usuário pode ter várias sessões)</li>
+            <li><strong>Store-Transaction</strong>: Um-para-muitos (1 loja pode ter várias transações)</li>
+        </ol>
+
+        <h2 id="rotas">Rotas</h2>
+        <p>Abaixo está a configuração atual das rotas:</p>
+        <pre><code>namespace :api do
+  namespace :v1 do
+    resource :session, only: [:create, :destroy]
+    resources :passwords, param: :token, only: [:create, :update]
+
+    resource :cnab, only: [] do
+      post "import", to: "cnab#import", as: "import"
+    end
+    resources :transactions, only: [:index, :create]
+    post "import", to: "transactions#import", as: "import_transactions"
+  end
+end
+
+# Rotas para autenticação OAuth
+get "/auth/failure", to: "sessions/omni_auths#failure", as: :omniauth_failure
+get "/auth/:provider/callback", to: "sessions#omniauth", as: :omniauth_callback
+
+# Rota para gerenciamento de jobs
+mount MissionControl::Jobs::Engine, at: "/jobs"
+
+# Rotas para documentação da API com Swagger UI
+mount Rswag::Ui::Engine => "/api-docs"
+mount Rswag::Api::Engine => "/api-docs"</code></pre>
+
+        <h3>Rotas Disponíveis</h3>
+        <ul>
+            <li><strong>POST /api/v1/session</strong>: Rota para criar uma nova sessão de usuário.</li>
+            <li><strong>DELETE /api/v1/session</strong>: Rota para encerrar a sessão do usuário.</li>
+            <li><strong>POST /api/v1/passwords</strong>: Rota para enviar um e-mail de redefinição de senha.</li>
+            <li><strong>PATCH /api/v1/passwords/:token</strong>: Rota para atualizar a senha do usuário.</li>
+            <li><strong>POST /api/v1/cnab/import</strong>: Rota para importar um arquivo CNAB.</li>
+            <li><strong>GET /api/v1/transactions</strong>: Rota para listar todas as transações.</li>
+            <li><strong>POST /api/v1/transactions</strong>: Rota para criar uma nova transação.</li>
+            <li><strong>POST /api/v1/import_transactions</strong>: Rota alternativa para importar transações.</li>
+            <li><strong>GET /auth/failure</strong>: Rota para lidar com falhas de autenticação OAuth.</li>
+            <li><strong>GET /auth/:provider/callback</strong>: Rota para lidar com o callback de autenticação OAuth.</li>
+            <li><strong>GET /jobs</strong>: Rota para acessar a interface de gerenciamento de jobs.</li>
+            <li><strong>GET /api-docs</strong>: Rota para acessar a documentação da API com Swagger UI.</li>
+        </ul>
+
+        <h2 id="overcommit">Overcommit no Rails</h2>
+        <p>O <strong>Overcommit</strong> é uma ferramenta poderosa para automação de hooks de Git. Ela permite que você execute scripts e verificações antes de fazer commit, garantindo que o código siga padrões definidos e evitando a introdução de erros.</p>
+        
+        <h3>Instalação do Overcommit</h3>
+        <ol>
+            <li>Adicione a gem ao seu Gemfile:
+                <pre><code>gem 'overcommit', require: false</code></pre>
+            </li>
+            <li>Instale a gem:
+                <pre><code>bundle install</code></pre>
+            </li>
+            <li>Instale o Overcommit:
+                <pre><code>overcommit --install</code></pre>
+            </li>
+        </ol>
+
+        <h2 id="seguranca">Verificação de Segurança com Brakeman</h2>
+        <p>O Brakeman foi utilizado para realizar uma análise estática de segurança no código do projeto.</p>
+        
+        <h3>Resultados da Análise</h3>
+        <ul>
+            <li><strong>Vulnerabilidades de Injeção SQL</strong>: Nenhuma detectada</li>
+            <li><strong>Cross-Site Scripting (XSS)</strong>: Nenhuma detectada</li>
+            <li><strong>Cross-Site Request Forgery (CSRF)</strong>: Proteção habilitada</li>
+            <li><strong>Exposição de Dados Sensíveis</strong>: Nenhuma detectada</li>
+            <li><strong>Configurações de Segurança</strong>: Configurações básicas corretas</li>
+        </ul>
+
+        <h3>Como Executar o Brakeman</h3>
+        <pre><code>brakeman</code></pre>
 
         <h2 id="configuracao-do-ambiente">Configuração do Ambiente</h2>
+        
         <h3>Pré-requisitos</h3>
         <ul>
             <li>Ruby 3.4.2</li>
             <li>Rails 8.0.2</li>
-            <li>PostgreSQL 13 ou Superior</li>
+            <li>PostgreSQL ou superior</li>
             <li>Docker (opcional)</li>
         </ul>
 
-        <h3>Passos para Configuração</h3>
+        <h3>Passos para Configuração (local)</h3>
         <ol>
             <li>Clone o repositório:
                 <pre><code>git clone https://github.com/alexsantosfilho/desafio-dev.git
@@ -94,7 +266,7 @@ cd desafio-dev</code></pre>
                     <li>Execute as migrações:
                         <pre><code>rails db:migrate</code></pre>
                     </li>
-                      <li>Execute a criação do Usuário:
+                    <li>Execute a criação do Usuário:
                         <pre><code>rails db:seed</code></pre>
                     </li>
                 </ul>
@@ -105,97 +277,50 @@ cd desafio-dev</code></pre>
         </ol>
         <p>A aplicação estará disponível em <a href="http://localhost:3000">http://localhost:3000</a>.</p>
 
-        <h2 id="endpoints-da-api">Endpoints da API</h2>
-        <h3>1. Upload de Arquivo CNAB</h3>
-        <ul>
-            <li><strong>Método</strong>: POST</li>
-            <li><strong>Endpoint</strong>: /import</li>
-            <li><strong>Descrição</strong>: Recebe um arquivo CNAB e processa as transações.</li>
-            <li><strong>Parâmetros</strong>:
-                <ul>
-                    <li>file: Arquivo CNAB no formato .txt.</li>
-                </ul>
-            </li>
-            <li><strong>Respostas</strong>:
-                <ul>
-                    <li><strong>Sucesso (200 OK)</strong>:
-                        <pre><code>{
-  "message": "Arquivo importado com sucesso!"
-}</code></pre>
-                    </li>
-                    <li><strong>Erro (400 Bad Request)</strong>:
-                        <pre><code>{
-  "error": "Por favor, selecione um arquivo."
-}</code></pre>
-                    </li>
-                    <li><strong>Erro (500 Internal Server Error)</strong>:
-                        <pre><code>{
-  "error": "Ocorreu um erro ao importar o arquivo. Verifique o formato e tente novamente."
-}</code></pre>
-                    </li>
-                </ul>
-            </li>
-        </ul>
-
-        <h3>2. Listar Transações por Loja</h3>
-        <ul>
-            <li><strong>Método</strong>: GET</li>
-            <li><strong>Endpoint</strong>: /</li>
-            <li><strong>Descrição</strong>: Exibe a lista de transações agrupadas por loja, incluindo o saldo total.</li>
-            <li><strong>Resposta</strong>:
-                <ul>
-                    <li><strong>Sucesso (200 OK)</strong>:
-                        <pre><code>&lt;h1&gt;Transações por Loja&lt;/h1&gt;
-&lt;ul&gt;
-  &lt;li&gt;Loja A - Saldo: R$ 1000.00&lt;/li&gt;
-  &lt;li&gt;Loja B - Saldo: R$ -500.00&lt;/li&gt;
-&lt;/ul&gt;</code></pre>
-                    </li>
-                </ul>
-            </li>
-        </ul>
-
-        <h2 id="exemplos-de-uso">Exemplos de Uso</h2>
-        <h3>Upload de Arquivo CNAB</h3>
-        <p>Usando curl:</p>
-        <pre><code>curl -X POST -F "file=@/caminho/para/seu/arquivo/CNAB.txt" http://localhost:3000/import</code></pre>
-
-        <h3>Acessando a Lista de Transações</h3>
-        <p>Abra o navegador e acesse:</p>
-        <pre><code>http://localhost:3000</code></pre>
-
         <h2 id="testes">Testes Automatizados</h2>
         <p>Para rodar os testes automatizados, execute:</p>
         <pre><code>bundle exec rspec</code></pre>
 
         <h2 id="docker">Docker</h2>
-        <p>Para rodar a aplicação em um container Docker é recomendado que tenha instalado o Docker Compose na versão 2, siga os passos abaixo para rodar aplicação em Docker Compose:</p>
+        <p>Para rodar a aplicação em um container Docker, siga os passos abaixo:</p>
         <ol>
             <li>Construa a imagem:
-                <pre><code>docker compose build</code></pre>
+                <pre><code>docker-compose build</code></pre>
             </li>
             <li>Inicie os containers:
-                <pre><code>docker compose up</code></pre>
-            </li>
-            <li>Crie o banco de dados:
-                <pre><code>docker compose exec web rails db:create</code></pre>
-            </li>
-             <li>Inicie a migração do banco de dados:
-                <pre><code>docker compose exec web rails db:migrate</code></pre>
-            </li>
-            <li>Crie o usuário:
-                <pre><code>docker compose exec web rails db:seed</code></pre>
-            </li>
-            <li>Execute os testes:
-                <pre><code>docker compose exec web bundle exec rspec</code></pre>
+                <pre><code>docker-compose up</code></pre>
             </li>
             <li>Acesse a aplicação em:
                 <pre><code>http://localhost:3000</code></pre>
             </li>
         </ol>
 
+        <h2 id="novas-tecnologias">Novas Tecnologias Utilizadas</h2>
+        
+        <h3>Solid Cache, Solid Queue e Solid Cable</h3>
+        <p>Neste projeto, optamos por utilizar as gems <strong>Solid Cache</strong>, <strong>Solid Queue</strong> e <strong>Solid Cable</strong> em vez das tradicionais Redis e Sidekiq.</p>
+        
+        <h4>Solid Cache</h4>
+        <p>Solução de caching que utiliza o banco de dados PostgreSQL.</p>
+        
+        <h4>Solid Queue</h4>
+        <p>Sistema de filas que utiliza o banco de dados PostgreSQL para gerenciar jobs.</p>
+        
+        <h4>Solid Cable</h4>
+        <p>Solução para comunicação em tempo real (WebSockets) que integra-se facilmente com o Rails.</p>
+
+        <h3>Hotwire e Turbo</h3>
+        <p>Utilizados para criar interfaces de usuário modernas e responsivas sem JavaScript complexo.</p>
+        
+        <h3>Autenticação com OAuth e Novo Sistema de Autenticação do Rails</h3>
+        <p>O projeto utiliza o novo sistema de autenticação do Rails, com suporte para sessões, redefinição de senhas e autenticação OAuth (Google).</p>
+        
+        <h3>Mission Control Jobs</h3>
+        <p>Interface web para gerenciar jobs em background, integrando-se com o Solid Queue.</p>
+        <p>Acessível em: <a href="http://localhost:3000/jobs">http://localhost:3000/jobs</a></p>
+
         <h2 id="consideracoes-finais">Considerações Finais</h2>
-        <p>Este projeto foi desenvolvido com o objetivo de facilitar o processamento de arquivos CNAB e a visualização de transações financeiras por loja. Para qualquer dúvida ou sugestão, sinta-se à vontade para entrar em contato.</p>
+        <p>Este projeto foi desenvolvido com o objetivo de demonstrar habilidades técnicas em Ruby on Rails, incluindo a utilização de novas tecnologias como Solid Cache, Solid Queue, Solid Cable, Hotwire, Turbo, o novo sistema de autenticação do Rails, Mission Control Jobs e Rswag para documentação da API. A aplicação é escalável, segura e eficiente, atendendo aos requisitos do desafio proposto.</p>
 
         <div class="login-section">
             <p>Para realizar o teste, utilize o seguinte login:</p>
