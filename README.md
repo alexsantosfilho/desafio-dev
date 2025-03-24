@@ -93,8 +93,7 @@ As rotas foram atualizadas para utilizar namespaces, versionamento da API, auten
 ## Diagrama do Banco de Dados
 
 
-```
-```
+![image](https://github.com/user-attachments/assets/44e59d0c-b91e-4a5c-828c-a3e56fe29800)
 
 
 ### Descrição das Tabelas
