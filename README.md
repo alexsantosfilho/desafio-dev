@@ -1,39 +1,56 @@
-# Desafio programação - para vaga desenvolvedor
+# Desafio Programação - Para Vaga Desenvolvedor
 
-Por favor leiam este documento do começo ao fim, com muita atenção.
-O intuito deste teste é avaliar seus conhecimentos técnicos em programação.
-O teste consiste em parsear [este arquivo de texto(CNAB)](https://github.com/ByCodersTec/desafio-ruby-on-rails/blob/master/CNAB.txt) e salvar suas informações(transações financeiras) em uma base de dados a critério do candidato.
-Este desafio deve ser feito por você em sua casa. Gaste o tempo que você quiser, porém normalmente você não deve precisar de mais do que algumas horas.
+Este documento descreve o projeto desenvolvido para o desafio de programação, que consiste em uma aplicação Ruby on Rails para processar arquivos CNAB e armazenar transações financeiras em um banco de dados. A aplicação também exibe uma lista de transações por loja, incluindo o saldo total.
 
-# Documentação do Projeto
+---
 
 ## Índice
-1. Visão Geral
-2. Estrutura do Projeto
-3. Configuração do Ambiente
-4. Endpoints da API
-5. Exemplos de Uso
-6. Testes
-7. Docker
-8. Considerações Finais
+1. [Visão Geral](#visão-geral)
+2. [Estrutura do Projeto](#estrutura-do-projeto)
+3. [Configuração do Ambiente](#configuração-do-ambiente)
+4. [Endpoints da API](#endpoints-da-api)
+5. [Exemplos de Uso](#exemplos-de-uso)
+6. [Testes](#testes)
+7. [Docker](#docker)
+8. [Considerações Finais](#considerações-finais)
+9. [Novas Tecnologias Utilizadas](#novas-tecnologias-utilizadas)
+
+---
 
 ## Visão Geral
 Este projeto é uma aplicação web desenvolvida em Ruby on Rails que permite o upload de arquivos CNAB (Controle Nacional de Automação Bancária) para processar transações financeiras de lojas. A aplicação faz o parse do arquivo, normaliza os dados e os armazena em um banco de dados PostgreSQL. Além disso, a aplicação exibe uma lista de transações por loja, incluindo o saldo total.
 
+---
+
 ## Estrutura do Projeto
+
 ### Models
 - **Store**: Representa uma loja e contém informações como nome e saldo.
-  - **Atributos**: name, owner, balance.
+  - **Atributos**: `name`, `owner`, `balance`.
   - **Relacionamento**: `has_many :transactions`.
 
 - **Transaction**: Representa uma transação financeira.
-  - **Atributos**: transaction_type, date, value, cpf, card, hour, store_id.
+  - **Atributos**: `transaction_type`, `date`, `value`, `cpf`, `card`, `hour`, `store_id`.
   - **Relacionamento**: `belongs_to :store`.
+
+- **User**: Representa um usuário do sistema.
+  - **Atributos**: `email`, `password_digest`, `provider`, `uid`.
+  - **Relacionamento**: `has_many :sessions`.
+
+- **Session**: Representa uma sessão de usuário.
+  - **Atributos**: `user_id`, `token`.
+  - **Relacionamento**: `belongs_to :user`.
 
 ### Controllers
 - **TransactionsController**:
   - `index`: Exibe a lista de transações por loja.
-  - `import`: Processa o arquivo CNAB e salva as transações no banco de dados.
+  - `import`: Processa o arquivo CNAB e salva as transações no banco de dados(Job solid_cache e solid_queue).
+
+- **SessionsController**:
+  - `create`: Cria uma nova sessão de usuário.
+  - `destroy`: Encerra a sessão do usuário.
+  - `omniauth`: Lida com o callback de autenticação OAuth.
+
 
 ### Services
 - **CnabParserService**: Faz o parse do arquivo CNAB e retorna uma lista de transações normalizadas.
@@ -42,101 +59,56 @@ Este projeto é uma aplicação web desenvolvida em Ruby on Rails que permite o 
 - **transactions/index.html.erb**: Exibe a lista de transações por loja e o saldo total.
 
 ### Rotas
-- `GET /`: Exibe a lista de transações.
-- `POST /import`: Recebe o arquivo CNAB e processa as transações.
-
-## Configuração do Ambiente
-### Pré-requisitos
-- Ruby 3.4.2
-- Rails 8.0.2
-- PostgreSQL ou superior
-- Docker (opcional)
-
-### Passos para Configuração
-1. Clone o repositório:
-   ```bash
-   git clone https://github.com/alexsantosfilho/desafio-dev.git
-   cd desafio-dev
+As rotas foram atualizadas para utilizar namespaces, versionamento da API, autenticação, gerenciamento de jobs e documentação da API com Swagger. Link api-doc(Swagger)
+  ```
+      http://localhost:3000/api-docs
    ```
-2. Instale as dependências:
-   ```bash
-   bundle install
-   ```
-3. Configure o banco de dados:
-   - Crie o banco de dados:
-     ```bash
-     rails db:create
-     ```
-   - Execute as migrações:
-     ```bash
-     rails db:migrate
-     ```
-   - Execute a criação do Usuário:
-     ```bash
-     rails db:seed
-     ```
-4. Inicie o servidor:
-   ```bash
-   rails server
-   ```
-A aplicação estará disponível em `http://localhost:3000`.
 
-## Endpoints da API
-### 1. Upload de Arquivo CNAB
-- **Método**: `POST`
-- **Endpoint**: `/import`
-- **Descrição**: Recebe um arquivo CNAB e processa as transações.
-- **Parâmetros**:
-  - `file`: Arquivo CNAB no formato `.txt`.
-- **Respostas**:
-  - **Sucesso (200 OK)**:
-    ```json
-    {
-      "message": "Arquivo importado com sucesso!"
-    }
-    ```
-  - **Erro (400 Bad Request)**:
-    ```json
-    {
-      "error": "Por favor, selecione um arquivo."
-    }
-    ```
-  - **Erro (500 Internal Server Error)**:
-    ```json
-    {
-      "error": "Ocorreu um erro ao importar o arquivo. Verifique o formato e tente novamente."
-    }
-    ```
+Abaixo está a configuração atual das rotas:
 
-### 2. Listar Transações por Loja
-- **Método**: `GET`
-- **Endpoint**: `/`
-- **Descrição**: Exibe a lista de transações agrupadas por loja, incluindo o saldo total.
-- **Resposta**:
-  - **Sucesso (200 OK)**:
-    ```html
-    <h1>Transações por Loja</h1>
-    <ul>
-      <li>Loja A - Saldo: R$ 1000.00</li>
-      <li>Loja B - Saldo: R$ -500.00</li>
-    </ul>
-    ```
+```ruby
+namespace :api do
+  namespace :v1 do
+    resource :session, only: [:create, :destroy]
+    resources :passwords, param: :token, only: [:create, :update]
 
-## Exemplos de Uso
-### Upload de Arquivo CNAB
-Usando `curl`:
-```bash
-curl -X POST -F "file=@/caminho/para/seu/arquivo/CNAB.txt" http://localhost:3000/import
+    resource :cnab, only: [] do
+      post "import", to: "cnab#import", as: "import"
+    end
+    resources :transactions, only: [:index, :create]
+    post "import", to: "transactions#import", as: "import_transactions"
+  end
+end
+
+# Rotas para autenticação OAuth
+get "/auth/failure", to: "sessions/omni_auths#failure", as: :omniauth_failure
+get "/auth/:provider/callback", to: "sessions#omniauth", as: :omniauth_callback
+
+# Rota para gerenciamento de jobs
+mount MissionControl::Jobs::Engine, at: "/jobs"
+
+# Rotas para documentação da API com Swagger UI
+mount Rswag::Ui::Engine => "/api-docs"
+mount Rswag::Api::Engine => "/api-docs"
 ```
 
-### Acessando a Lista de Transações
-Abra o navegador e acesse:
-```
-http://localhost:3000
-```
+#### Rotas Disponíveis
+- **POST /api/v1/session**: Rota para criar uma nova sessão de usuário.
+- **DELETE /api/v1/session**: Rota para encerrar a sessão do usuário.
+- **POST /api/v1/passwords**: Rota para enviar um e-mail de redefinição de senha.
+- **PATCH /api/v1/passwords/:token**: Rota para atualizar a senha do usuário.
+- **POST /api/v1/cnab/import**: Rota para importar um arquivo CNAB.
+- **GET /api/v1/transactions**: Rota para listar todas as transações.
+- **POST /api/v1/transactions**: Rota para criar uma nova transação.
+- **POST /api/v1/import_transactions**: Rota alternativa para importar transações.
+- **GET /auth/failure**: Rota para lidar com falhas de autenticação OAuth.
+- **GET /auth/:provider/callback**: Rota para lidar com o callback de autenticação OAuth.
+- **GET /jobs**: Rota para acessar a interface de gerenciamento de jobs.
+- **GET /api-docs**: Rota para acessar a documentação da API com Swagger UI.
 
-# Overcommit no Rails
+---
 
+## Overcommit no Rails
 O **Overcommit** é uma ferramenta poderosa para automação de hooks de Git. Ela permite que você execute scripts e verificações antes de fazer commit, garantindo que o código siga padrões definidos e evitando a introdução de erros. No contexto do Ruby on Rails, o Overcommit pode ser configurado para rodar uma série de verificações úteis como:
 
 - Verificação de estilo de código (usando `RuboCop`)
@@ -144,27 +116,28 @@ O **Overcommit** é uma ferramenta poderosa para automação de hooks de Git. El
 - Análise de dependências
 - Formatação do código (com `Prettier` ou `Standard`)
 
-## Instalação do Overcommit
+### Instalação do Overcommit
+1. Adicione a gem ao seu Gemfile:
+   ```ruby
+   gem 'overcommit', require: false
+   ```
 
-1. **Adicionar a gem** ao seu Gemfile:
+2. Instale a gem:
+   ```bash
+   bundle install
+   ```
 
-```ruby
-gem 'overcommit', require: false
+3. Instale o Overcommit:
+   ```bash
+   overcommit --install
+   ```
 
-2. Instalar a gem:
+---
 
-bundle install
-
-3. Instalar o Overcommit:
-
-overcommit --install
-
-
-# Verificação de Segurança com Brakeman
-
+## Verificação de Segurança com Brakeman
 O Brakeman foi utilizado para realizar uma análise estática de segurança no código do projeto. Abaixo estão os principais pontos verificados e os resultados obtidos:
 
-## Resultados da Análise
+### Resultados da Análise
 1. **Vulnerabilidades de Injeção SQL**:
    - **Status**: Nenhuma vulnerabilidade de injeção SQL foi detectada.
    - **Recomendação**: Continuar utilizando métodos seguros de acesso ao banco de dados, como `ActiveRecord` queries.
@@ -185,16 +158,23 @@ O Brakeman foi utilizado para realizar uma análise estática de segurança no c
    - **Status**: Configurações de segurança básicas estão corretas.
    - **Recomendação**: Revisar periodicamente as configurações de segurança do Rails e manter o framework atualizado.
 
-## Como Executar o Brakeman
-Para executar o Brakeman e verificar a segurança do código, é bem fácil:
+### Como Executar o Brakeman
+Para executar o Brakeman e verificar a segurança do código, execute no terminal do projeto o comando:
+```bash
+brakeman
+```
 
-execute no terminal do projeto o comando: brakeman
+---
 
 ## Testes Automatizados
 Para rodar os testes automatizados, execute:
 ```bash
 bundle exec rspec
 ```
+
+---
+
+## Configuração do Ambiente
 
 ## Docker
 Para rodar a aplicação em um container Docker, siga os passos abaixo:
@@ -203,31 +183,143 @@ Para rodar a aplicação em um container Docker, siga os passos abaixo:
    ```bash
    docker-compose build
    ```
+
 2. Inicie os containers:
    ```bash
    docker-compose up
    ```
-3. Crie o banco de dados:
-   ```bash
-    docker compose exec web rails db:create
-   ```
-4. Inicie a migração do banco de dados:
-   ```bash
-    docker compose exec web rails db:migrate
-   ```
-5. Crie o usuário:
-   ```bash
-    docker compose exec web rails db:seed
-   ```
-6. execute os testes:
-   ```bash
-    docker compose exec web bundle exec rspec
-   ```
-7. Acesse a aplicação em:
+
+3. Acesse a aplicação em:
    ```
    http://localhost:3000
    ```
 
+---
+
+### Passos para Configuração(local)
+
+### Pré-requisitos
+- Ruby 3.4.2
+- Rails 8.0.2
+- PostgreSQL ou superior
+- Docker (opcional)
+
+1. Clone o repositório:
+   ```bash
+   git clone https://github.com/alexsantosfilho/desafio-dev.git
+   cd desafio-dev
+   ```
+
+2. Instale as dependências:
+   ```bash
+   bundle install
+   ```
+
+3. Configure o banco de dados:
+   - Crie o banco de dados:
+     ```bash
+     rails db:create
+     ```
+   - Execute as migrações:
+     ```bash
+     rails db:migrate
+     ```
+   - Execute a criação do Usuário:
+     ```bash
+     rails db:seed
+     ```
+
+4. Inicie o servidor:
+   ```bash
+   rails server
+   ```
+
+A aplicação estará disponível em `http://localhost:3000`.
+
+### Acessando a Lista de Transações
+Abra o navegador e acesse:
+```
+http://localhost:3000
+```
+
+---
+
+## Novas Tecnologias Utilizadas
+
+### Solid Cache, Solid Queue e Solid Cable
+Neste projeto, optamos por utilizar as gems **Solid Cache**, **Solid Queue** e **Solid Cable** em vez das tradicionais **Redis** e **Sidekiq**. Essas gems são desenvolvidas pela equipe do Rails e oferecem soluções modernas e eficientes para caching, processamento de filas e comunicação em tempo real.
+
+#### Solid Cache
+- **Descrição**: O Solid Cache é uma solução de caching que utiliza o banco de dados PostgreSQL para armazenar dados em cache, eliminando a necessidade de um servidor Redis separado.
+- **Link Oficial**: [Solid Cache](https://github.com/rails/solid_cache)
+
+#### Solid Queue
+- **Descrição**: O Solid Queue é um sistema de filas que utiliza o banco de dados PostgreSQL para gerenciar jobs em segundo plano, oferecendo uma alternativa ao Sidekiq.
+- **Link Oficial**: [Solid Queue](https://github.com/rails/solid_queue)
+
+#### Solid Cable
+- **Descrição**: O Solid Cable é uma solução para comunicação em tempo real (WebSockets) que integra-se facilmente com o Rails, permitindo a criação de aplicações interativas.
+- **Link Oficial**: [Solid Cable](https://github.com/rails/solid_cable)
+
+---
+
+### Hotwire e Turbo
+Também utilizamos o **Hotwire** e o **Turbo** para criar interfaces de usuário modernas e responsivas sem a necessidade de escrever JavaScript complexo.
+
+#### Hotwire
+- **Descrição**: O Hotwire é uma abordagem moderna para desenvolvimento web que utiliza HTML sobre o wire, permitindo a criação de aplicações rápidas e responsivas.
+- **Link Oficial**: [Hotwire](https://hotwired.dev/)
+
+#### Turbo::StreamsChannel
+- **Descrição**: O `Turbo::StreamsChannel` é utilizado para transmitir atualizações em tempo real para os clientes, permitindo a criação de funcionalidades como notificações em tempo real e atualizações dinâmicas de conteúdo.
+- **Link Oficial**: [Turbo Streams](https://turbo.hotwired.dev/handbook/streams)
+
+---
+
+### Autenticação com OAuth e Novo Sistema de Autenticação do Rails
+O projeto utiliza o novo sistema de autenticação do Rails, que inclui suporte para sessões, redefinição de senhas e autenticação OAuth (Google).
+
+#### Autenticação Tradicional
+- **Sessões**: As sessões são gerenciadas através do `resource :session`, permitindo login e logout.
+- **Redefinição de Senha**: A redefinição de senha é gerenciada através do `resources :passwords`, com suporte a tokens.
+
+#### Autenticação OAuth (Google)
+- **OAuth**: A autenticação OAuth é implementada para permitir login via Google. As rotas `omniauth_failure` e `omniauth_callback` são utilizadas para lidar com falhas e sucessos na autenticação.
+
+---
+
+### Mission Control Jobs
+Para gerenciar jobs de forma eficiente, utilizamos a gem **Mission Control Jobs**, que oferece uma interface web semelhante ao Sidekiq Web para monitorar e gerenciar jobs.
+
+#### Mission Control Jobs
+- **Descrição**: Mission Control Jobs é uma interface web para gerenciar jobs em background, integrando-se com o Solid Queue para fornecer uma experiência de gerenciamento de jobs semelhante ao Sidekiq.
+- **Link Oficial**: [Mission Control Jobs](https://github.com/rails/mission_control-jobs)
+
+#### Como Acessar
+A interface de gerenciamento de jobs pode ser acessada em:
+```
+http://localhost:3000/jobs
+```
+
+---
+
+### Documentação da API com Swagger UI
+Para documentar a API de forma clara e interativa, utilizamos a gem **Rswag**, que integra o Swagger UI ao projeto Rails.
+
+#### Rswag
+- **Descrição**: Rswag é uma gem que permite gerar documentação da API no formato Swagger e disponibilizá-la através de uma interface web interativa.
+- **Link Oficial**: [Rswag](https://github.com/rswag/rswag)
+
+#### Como Acessar
+A documentação da API pode ser acessada em:
+```
+http://localhost:3000/api-docs
+```
+
+---
+
+## Considerações Finais
+Este projeto foi desenvolvido com o objetivo de demonstrar habilidades técnicas em Ruby on Rails, incluindo a utilização de novas tecnologias como Solid Cache, Solid Queue, Solid Cable, Hotwire, Turbo, o novo sistema de autenticação do Rails, Mission Control Jobs e Rswag para documentação da API. A aplicação é escalável, segura e eficiente, atendendo aos requisitos do desafio proposto. As rotas foram atualizadas para seguir boas práticas de versionamento e organização de APIs, e a autenticação foi implementada com suporte a OAuth para maior flexibilidade e segurança. A interface de gerenciamento de jobs e a documentação da API oferecem uma experiência robusta para desenvolvedores e usuários.
 # Instruções de entrega do desafio
 
 1. Primeiro, faça um fork deste projeto para sua conta no Github (crie uma se você não possuir).
