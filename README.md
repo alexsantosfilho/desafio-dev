@@ -18,14 +18,12 @@ Este documento descreve o projeto desenvolvido para o desafio de programação, 
 4. [Rotas](#rotas)  
    - [Rotas Disponíveis](#rotas-disponíveis)  
 5. [Configuração do Ambiente](#configuração-do-ambiente)  
-6. [Endpoints da API](#endpoints-da-api)  
-7. [Exemplos de Uso](#exemplos-de-uso)  
-8. [Testes](#testes)  
-9. [Docker](#docker)  
-10. [Overcommit no Rails](#overcommit-no-rails)  
+6. [Testes](#testes-automatizados)  
+7. [Docker](#docker)  
+8. [Overcommit no Rails](#overcommit-no-rails)  
     - [Instalação do Overcommit](#instalação-do-overcommit)  
-11. [Considerações Finais](#considerações-finais)  
-12. [Novas Tecnologias Utilizadas](#novas-tecnologias-utilizadas)  
+9. [Considerações Finais](#considerações-finais)  
+10. [Novas Tecnologias Utilizadas](#novas-tecnologias-utilizadas)  
 
 
 ---
