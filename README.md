@@ -56,13 +56,25 @@ Este projeto é uma aplicação web desenvolvida em Ruby on Rails que permite o 
 - **CnabParserService**: Faz o parse do arquivo CNAB e retorna uma lista de transações normalizadas.
 
 ### Views
-- **transactions/index.html.erb**: Exibe a lista de transações por loja e o saldo total.
+- **session/new**: Exibe a tela de login.
+![image](https://github.com/user-attachments/assets/0875cfbc-9a30-4452-ab4d-7d548e207497)
 
-### Rotas
+- **transactions/index.html.erb**: Exibe a lista de transações por loja e o saldo total.
+![image](https://github.com/user-attachments/assets/28cee5d7-8147-46bc-a82a-dd9bb1e6f08f)
+
+### Documentação da API com Swagger UI
+Para documentar a API de forma clara e interativa, utilizamos a gem **Rswag**, que integra o Swagger UI ao projeto Rails.
+
+#### Rswag
+- **Descrição**: Rswag é uma gem que permite gerar documentação da API no formato Swagger e disponibilizá-la através de uma interface web interativa.
+- **Link Oficial**: [Rswag](https://github.com/rswag/rswag)
 As rotas foram atualizadas para utilizar namespaces, versionamento da API, autenticação, gerenciamento de jobs e documentação da API com Swagger. Link api-doc(Swagger)
   ```
       http://localhost:3000/api-docs
    ```
+![image](https://github.com/user-attachments/assets/5b681b42-04eb-4059-911f-712c68d9db46)
+
+### Rotas
 
 Abaixo está a configuração atual das rotas:
 
@@ -302,21 +314,8 @@ A interface de gerenciamento de jobs pode ser acessada em:
 ```
 http://localhost:3000/jobs
 ```
+![image](https://github.com/user-attachments/assets/b37436fe-d36a-4bb4-bf97-a68ba4ee8c0e)
 
----
-
-### Documentação da API com Swagger UI
-Para documentar a API de forma clara e interativa, utilizamos a gem **Rswag**, que integra o Swagger UI ao projeto Rails.
-
-#### Rswag
-- **Descrição**: Rswag é uma gem que permite gerar documentação da API no formato Swagger e disponibilizá-la através de uma interface web interativa.
-- **Link Oficial**: [Rswag](https://github.com/rswag/rswag)
-
-#### Como Acessar
-A documentação da API pode ser acessada em:
-```
-http://localhost:3000/api-docs
-```
 
 ---
 
