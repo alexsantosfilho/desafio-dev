@@ -297,6 +297,8 @@ Para gerenciar jobs de forma eficiente, utilizamos a gem **Mission Control Jobs*
 
 #### Como Acessar
 A interface de gerenciamento de jobs pode ser acessada em:
+- **Login**: admin
+- **Link Oficial**:password
 ```
 http://localhost:3000/jobs
 ```
