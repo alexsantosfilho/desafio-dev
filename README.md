@@ -221,6 +221,8 @@ O **Overcommit** é uma ferramenta poderosa para automação de hooks de Git. El
    ```bash
    overcommit --install
    ```
+![Screenshot from 2025-03-19 20-53-17](https://github.com/user-attachments/assets/ce8a373d-8983-4d98-8676-33c649b98815)
+
 
 ---
 
@@ -253,6 +255,7 @@ Para executar o Brakeman e verificar a segurança do código, execute no termina
 ```bash
 brakeman
 ```
+![image](https://github.com/user-attachments/assets/231c66ae-da11-41d6-ac20-d813a52e1761)
 
 ---
 
@@ -261,6 +264,8 @@ Para rodar os testes automatizados, execute:
 ```bash
 bundle exec rspec
 ```
+![image](https://github.com/user-attachments/assets/ecefedd8-d285-4165-b952-ff63aa02d939)
+
 
 ---
 
